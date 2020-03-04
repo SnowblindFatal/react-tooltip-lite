@@ -2,16 +2,16 @@
  * @class Tooltip
  * @description A lightweight and responsive tooltip.
  */
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import Portal, { isBrowser } from './Portal';
-import positions from './position';
-import { getScrollParent } from './functions';
+import Portal, { isBrowser } from "./Portal";
+import positions from "./position";
+import { getScrollParent } from "./functions";
 
 // default colors
-const defaultColor = '#fff';
-const defaultBg = '#333';
+const defaultColor = "#fff";
+const defaultBg = "#333";
 
 const resizeThrottle = 100;
 const resizeThreshold = 5;
@@ -36,10 +36,7 @@ class Tooltip extends React.Component {
     hoverDelay: PropTypes.number,
     isOpen: PropTypes.bool,
     mouseOutDelay: PropTypes.number,
-    padding: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
+    padding: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     styles: PropTypes.object,
     tagName: PropTypes.string,
     tipContentHover: PropTypes.bool,
@@ -47,16 +44,16 @@ class Tooltip extends React.Component {
     useDefaultStyles: PropTypes.bool,
     useHover: PropTypes.bool,
     zIndex: PropTypes.number,
-    onToggle: PropTypes.func,
-  }
+    onToggle: PropTypes.func
+  };
 
   static defaultProps = {
     arrow: true,
     arrowSize: 10,
-    background: '',
-    className: '',
-    color: '',
-    direction: 'up',
+    background: "",
+    className: "",
+    color: "",
+    direction: "up",
     distance: undefined,
     eventOff: undefined,
     eventOn: undefined,
@@ -65,16 +62,16 @@ class Tooltip extends React.Component {
     hoverDelay: 200,
     isOpen: undefined,
     mouseOutDelay: undefined,
-    padding: '10px',
+    padding: "10px",
     styles: {},
-    tagName: 'div',
+    tagName: "div",
     tipContentHover: false,
     tipContentClassName: undefined,
     useDefaultStyles: false,
     useHover: true,
     zIndex: 1000,
-    onToggle: undefined,
-  }
+    onToggle: undefined
+  };
 
   static getDerivedStateFromProps(nextProps) {
     return isBrowser && nextProps.isOpen ? { hasBeenShown: true } : null;
@@ -91,7 +88,7 @@ class Tooltip extends React.Component {
       showTip: false,
       hasHover: false,
       ignoreShow: false,
-      hasBeenShown: false,
+      hasBeenShown: false
     };
 
     this.showTip = this.showTip.bind(this);
@@ -118,10 +115,10 @@ class Tooltip extends React.Component {
 
     this.scrollParent = getScrollParent(this.target);
 
-    window.addEventListener('resize', this.listenResizeScroll);
-    this.scrollParent.addEventListener('scroll', this.listenResizeScroll);
-    window.addEventListener('touchstart', this.bodyTouchStart);
-    window.addEventListener('touchEnd', this.bodyTouchEnd);
+    window.addEventListener("resize", this.listenResizeScroll);
+    this.scrollParent.addEventListener("scroll", this.listenResizeScroll);
+    window.addEventListener("touchstart", this.bodyTouchStart);
+    window.addEventListener("touchEnd", this.bodyTouchEnd);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -145,10 +142,10 @@ class Tooltip extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.listenResizeScroll);
-    this.scrollParent.removeEventListener('scroll', this.listenResizeScroll);
-    window.removeEventListener('touchstart', this.bodyTouchStart);
-    window.removeEventListener('touchEnd', this.bodyTouchEnd);
+    window.removeEventListener("resize", this.listenResizeScroll);
+    this.scrollParent.removeEventListener("scroll", this.listenResizeScroll);
+    window.removeEventListener("touchstart", this.bodyTouchStart);
+    window.removeEventListener("touchEnd", this.bodyTouchEnd);
     clearTimeout(this.debounceTimeout);
     clearTimeout(this.hoverTimeout);
   }
@@ -189,7 +186,11 @@ class Tooltip extends React.Component {
 
   bodyTouchStart(e) {
     // if it's a controlled tip we don't want to auto-dismiss, otherwise we just ignore taps inside the tip
-    if (!(this.target && this.target.contains(e.target)) && !(this.tip && this.tip.contains(e.target)) && !this.props.isOpen) {
+    if (
+      !(this.target && this.target.contains(e.target)) &&
+      !(this.tip && this.tip.contains(e.target)) &&
+      !this.props.isOpen
+    ) {
       this.hideTip();
     }
   }
@@ -205,7 +206,7 @@ class Tooltip extends React.Component {
     }
 
     this.setState({ showTip: true }, () => {
-      if (typeof this.props.onToggle === 'function') {
+      if (typeof this.props.onToggle === "function") {
         this.props.onToggle(this.state.showTip);
       }
     });
@@ -214,7 +215,7 @@ class Tooltip extends React.Component {
   hideTip() {
     this.setState({ hasHover: false });
     this.setState({ showTip: false }, () => {
-      if (typeof this.props.onToggle === 'function') {
+      if (typeof this.props.onToggle === "function") {
         this.props.onToggle(this.state.showTip);
       }
     });
@@ -263,26 +264,28 @@ class Tooltip extends React.Component {
       tipContentHover,
       tipContentClassName,
       useDefaultStyles,
-      useHover,
+      useHover
     } = this.props;
 
-    const isControlledByProps = typeof isOpen !== 'undefined' && isOpen !== null;
+    const isControlledByProps = typeof isOpen !== "undefined" && isOpen !== null;
     const showTip = isControlledByProps ? isOpen : this.state.showTip;
 
     const wrapperStyles = {
-      position: 'relative',
-      ...styles,
+      position: "relative",
+      ...styles
     };
 
     const props = {
       style: wrapperStyles,
-      ref: (target) => { this.target = target; },
-      className,
+      ref: target => {
+        this.target = target;
+      },
+      className
     };
 
     const portalProps = {
       // keep clicks on the tip from closing click controlled tips
-      onClick: stopProp,
+      onClick: stopProp
     };
 
     // event handling
@@ -300,7 +303,7 @@ class Tooltip extends React.Component {
       // only use hover if they don't have a toggle event
     } else if (useHover && !isControlledByProps) {
       props.onMouseEnter = this.startHover;
-      props.onMouseLeave = (tipContentHover || mouseOutDelay) ? this.endHover : this.hideTip;
+      props.onMouseLeave = tipContentHover || mouseOutDelay ? this.endHover : this.hideTip;
       props.onTouchStart = this.targetTouchStart;
       props.onTouchEnd = this.targetTouchEnd;
 
@@ -315,39 +318,58 @@ class Tooltip extends React.Component {
     let tipPortal;
 
     if (this.state.hasBeenShown) {
-      const currentPositions = positions(direction, forceDirection, this.tip, this.target, { ...this.state, showTip }, {
-        background: useDefaultStyles ? defaultBg : background,
-        arrow,
-        arrowSize,
-        distance,
-      });
+      const currentPositions = positions(
+        direction,
+        forceDirection,
+        this.tip,
+        this.target,
+        { ...this.state, showTip },
+        {
+          background: useDefaultStyles ? defaultBg : background,
+          arrow,
+          arrowSize,
+          distance
+        }
+      );
 
       const tipStyles = {
         ...currentPositions.tip,
         background: useDefaultStyles ? defaultBg : background,
         color: useDefaultStyles ? defaultColor : color,
         padding,
-        boxSizing: 'border-box',
+        boxSizing: "border-box",
         zIndex: this.props.zIndex,
-        position: 'absolute',
-        display: 'inline-block',
+        position: "absolute",
+        display: "inline-block"
       };
 
       const arrowStyles = {
         ...currentPositions.arrow,
-        position: 'absolute',
-        width: '0px',
-        height: '0px',
-        zIndex: this.props.zIndex + 1,
+        position: "absolute",
+        width: "0px",
+        height: "0px",
+        zIndex: this.props.zIndex + 1
       };
 
       tipPortal = (
         <Portal>
-          <div {...portalProps} className={typeof tipContentClassName !== 'undefined' ? tipContentClassName : className}>
-            <span className="react-tooltip-lite" style={tipStyles} ref={(tip) => { this.tip = tip; }}>
+          <div
+            {...portalProps}
+            className={typeof tipContentClassName !== "undefined" ? tipContentClassName : className}
+          >
+            <span
+              className="react-tooltip-lite"
+              style={tipStyles}
+              ref={tip => {
+                this.tip = tip;
+              }}
+            >
               {content}
             </span>
-            <span className={`react-tooltip-lite-arrow react-tooltip-lite-${currentPositions.realDirection}-arrow`} style={arrowStyles} />
+            <span
+              className={`react-tooltip-lite-arrow react-tooltip-lite-${currentPositions.realDirection}-arrow`}
+              style={arrowStyles}
+            />
           </div>
         </Portal>
       );
