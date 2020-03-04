@@ -48,8 +48,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 // default colors
-var defaultColor = '#fff';
-var defaultBg = '#333';
+var defaultColor = "#fff";
+var defaultBg = "#333";
 var resizeThrottle = 100;
 var resizeThreshold = 5;
 
@@ -82,6 +82,10 @@ function (_React$Component) {
 
     _defineProperty(_assertThisInitialized(_this), "hoverTimeout", false);
 
+    _defineProperty(_assertThisInitialized(_this), "updateMousePos", function (e) {
+      _this.mouseX = e.pageX;
+    });
+
     _this.state = {
       showTip: false,
       hasHover: false,
@@ -100,6 +104,7 @@ function (_React$Component) {
     _this.bodyTouchEnd = _this.bodyTouchEnd.bind(_assertThisInitialized(_this));
     _this.targetTouchStart = _this.targetTouchStart.bind(_assertThisInitialized(_this));
     _this.targetTouchEnd = _this.targetTouchEnd.bind(_assertThisInitialized(_this));
+    _this.mouseX = 0;
     return _this;
   }
 
@@ -116,10 +121,10 @@ function (_React$Component) {
       }
 
       this.scrollParent = (0, _functions.getScrollParent)(this.target);
-      window.addEventListener('resize', this.listenResizeScroll);
-      this.scrollParent.addEventListener('scroll', this.listenResizeScroll);
-      window.addEventListener('touchstart', this.bodyTouchStart);
-      window.addEventListener('touchEnd', this.bodyTouchEnd);
+      window.addEventListener("resize", this.listenResizeScroll);
+      this.scrollParent.addEventListener("scroll", this.listenResizeScroll);
+      window.addEventListener("touchstart", this.bodyTouchStart);
+      window.addEventListener("touchEnd", this.bodyTouchEnd);
     }
   }, {
     key: "componentDidUpdate",
@@ -146,10 +151,10 @@ function (_React$Component) {
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
-      window.removeEventListener('resize', this.listenResizeScroll);
-      this.scrollParent.removeEventListener('scroll', this.listenResizeScroll);
-      window.removeEventListener('touchstart', this.bodyTouchStart);
-      window.removeEventListener('touchEnd', this.bodyTouchEnd);
+      window.removeEventListener("resize", this.listenResizeScroll);
+      this.scrollParent.removeEventListener("scroll", this.listenResizeScroll);
+      window.removeEventListener("touchstart", this.bodyTouchStart);
+      window.removeEventListener("touchEnd", this.bodyTouchEnd);
       clearTimeout(this.debounceTimeout);
       clearTimeout(this.hoverTimeout);
     }
@@ -227,7 +232,7 @@ function (_React$Component) {
       this.setState({
         showTip: true
       }, function () {
-        if (typeof _this2.props.onToggle === 'function') {
+        if (typeof _this2.props.onToggle === "function") {
           _this2.props.onToggle(_this2.state.showTip);
         }
       });
@@ -243,7 +248,7 @@ function (_React$Component) {
       this.setState({
         showTip: false
       }, function () {
-        if (typeof _this3.props.onToggle === 'function') {
+        if (typeof _this3.props.onToggle === "function") {
           _this3.props.onToggle(_this3.state.showTip);
         }
       });
@@ -251,6 +256,8 @@ function (_React$Component) {
   }, {
     key: "startHover",
     value: function startHover() {
+      window.addEventListener("mousemove", this.updateMousePos);
+
       if (!this.state.ignoreShow) {
         this.setState({
           hasHover: true
@@ -262,6 +269,7 @@ function (_React$Component) {
   }, {
     key: "endHover",
     value: function endHover() {
+      window.removeEventListener("mousemove", this.updateMousePos);
       this.setState({
         hasHover: false
       });
@@ -301,11 +309,11 @@ function (_React$Component) {
           tipContentClassName = _this$props.tipContentClassName,
           useDefaultStyles = _this$props.useDefaultStyles,
           useHover = _this$props.useHover;
-      var isControlledByProps = typeof isOpen !== 'undefined' && isOpen !== null;
+      var isControlledByProps = typeof isOpen !== "undefined" && isOpen !== null;
       var showTip = isControlledByProps ? isOpen : this.state.showTip;
 
       var wrapperStyles = _objectSpread({
-        position: 'relative'
+        position: "relative"
       }, styles);
 
       var props = {
@@ -360,21 +368,22 @@ function (_React$Component) {
           background: useDefaultStyles ? defaultBg : background,
           color: useDefaultStyles ? defaultColor : color,
           padding: padding,
-          boxSizing: 'border-box',
+          boxSizing: "border-box",
           zIndex: this.props.zIndex,
-          position: 'absolute',
-          display: 'inline-block'
+          position: "absolute",
+          display: "inline-block",
+          left: this.mouseX
         });
 
         var arrowStyles = _objectSpread({}, currentPositions.arrow, {
-          position: 'absolute',
-          width: '0px',
-          height: '0px',
+          position: "absolute",
+          width: "0px",
+          height: "0px",
           zIndex: this.props.zIndex + 1
         });
 
         tipPortal = _react["default"].createElement(_Portal["default"], null, _react["default"].createElement("div", _extends({}, portalProps, {
-          className: typeof tipContentClassName !== 'undefined' ? tipContentClassName : className
+          className: typeof tipContentClassName !== "undefined" ? tipContentClassName : className
         }), _react["default"].createElement("span", {
           className: "react-tooltip-lite",
           style: tipStyles,
@@ -425,10 +434,10 @@ _defineProperty(Tooltip, "propTypes", {
 _defineProperty(Tooltip, "defaultProps", {
   arrow: true,
   arrowSize: 10,
-  background: '',
-  className: '',
-  color: '',
-  direction: 'up',
+  background: "",
+  className: "",
+  color: "",
+  direction: "up",
   distance: undefined,
   eventOff: undefined,
   eventOn: undefined,
@@ -437,9 +446,9 @@ _defineProperty(Tooltip, "defaultProps", {
   hoverDelay: 200,
   isOpen: undefined,
   mouseOutDelay: undefined,
-  padding: '10px',
+  padding: "10px",
   styles: {},
-  tagName: 'div',
+  tagName: "div",
   tipContentHover: false,
   tipContentClassName: undefined,
   useDefaultStyles: false,
