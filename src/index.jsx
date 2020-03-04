@@ -103,6 +103,7 @@ class Tooltip extends React.Component {
     this.bodyTouchEnd = this.bodyTouchEnd.bind(this);
     this.targetTouchStart = this.targetTouchStart.bind(this);
     this.targetTouchEnd = this.targetTouchEnd.bind(this);
+    this.mouseX = 0;
   }
 
   componentDidMount() {
@@ -222,6 +223,7 @@ class Tooltip extends React.Component {
   }
 
   startHover() {
+    window.addEventListener("mousemove", this.updateMousePos);
     if (!this.state.ignoreShow) {
       this.setState({ hasHover: true });
 
@@ -231,11 +233,16 @@ class Tooltip extends React.Component {
   }
 
   endHover() {
+    window.removeEventListener("mousemove", this.updateMousePos);
     this.setState({ hasHover: false });
 
     clearTimeout(this.hoverTimeout);
     this.hoverTimeout = setTimeout(this.checkHover, this.props.mouseOutDelay || this.props.hoverDelay);
   }
+
+  updateMousePos = e => {
+    this.mouseX = e.pageX;
+  };
 
   checkHover() {
     this.state.hasHover ? this.showTip() : this.hideTip();
@@ -340,7 +347,8 @@ class Tooltip extends React.Component {
         boxSizing: "border-box",
         zIndex: this.props.zIndex,
         position: "absolute",
-        display: "inline-block"
+        display: "inline-block",
+        left: this.mouseX
       };
 
       const arrowStyles = {
